@@ -37,7 +37,7 @@ const DashboardPage: React.FC = () => {
   // Render Dashboard with tasks and handlers
   return (
     <AuthenticatedDashboard
-      username="John"
+      
       tasks={tasks}
       onEditTask={handleEditTask}
       onDeleteTask={handleDeleteTask}

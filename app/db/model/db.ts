@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { UserModel } from "./user.model";
-
+import * as bcrypt from "bcryptjs";
 
 /**
  * Connects to the MongoDB database using the provided connection string.
@@ -10,23 +10,48 @@ import { UserModel } from "./user.model";
 const connectDB = async () => {
   try {
     // Connect to the MongoDB database using the provided connection string
-    await mongoose.connect(`${process.env?.MONGODB_URI}`);
+    await mongoose.connect(`${process.env?.MONGODB_URI || "mongodb://localhost:27017"}`)
+     
+    await connect()
+  
     
-    // Create a dummy test user
-    await createDummyUser();
+    
   } catch (error) {
+    
     // Log the error message and exit the process
     console.log(`Error connecting to MongoDB: ${error}`);
-    process.exit(1);
+    
   }
 };
 
-// create dummy test user 
-const createDummyUser = async () => {
-  const user = new UserModel({
-    username: "test@test.com",
-    password: "password",
-  });
-  await user.save();
+
+// try creating a dummy user
+const connect = async () => {
+  // Retry 5 times within 1 minute
+  for (let i = 0; i < 5; i++) {
+    try {
+
+       // create a dummy test user
+       const user = await UserModel.findOne({ username: "test@test.com" });
+  if (user) {
+    break;
+  }else{
+    const hashedPassword = await bcrypt.hash("password", 10);
+    const user1 =  UserModel.create({
+      email: "test@test.com",
+      password: hashedPassword,
+    });
+   
+    console.log({'userCreated': JSON.stringify(user1)})
+     }
+     
+    } catch (error) {
+      console.error('Error creating user:', error);
+
+      // await client.close();
+      await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 10 seconds before retrying
+    }
+  }
 }
+
 export default connectDB;

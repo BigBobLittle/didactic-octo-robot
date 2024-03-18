@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest  
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_DATABASE=test_db 
+    volumes:
+      - mongodb_data:/data/db
+    restart: always
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.stats().ok"]
+      interval: 10s
+      retries: 10
+
+  nextjs:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/test_db
+      - JWT_SECRET='some_random_string'
+      - NEXT_PUBLIC_API="http://localhost:3000/api/graphql"
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/usr/src/app
+
+
+volumes:
+  mongodb_data:

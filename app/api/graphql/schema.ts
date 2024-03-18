@@ -57,6 +57,7 @@ const typeDefs = gql`
     deleteTask(input: DeleteTaskInput!): Response
     login(input: LoginInput!): Response!
     signup(input: SignupInput): Response!
+    
   }
 `;
 

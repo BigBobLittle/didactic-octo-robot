@@ -5,7 +5,7 @@ import { setContext } from "@apollo/client/link/context";
 import React from 'react'
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:3000/api/graphql", 
+  uri: process.env.NEXT_PUBLIC_API || "http://localhost:3000/api/graphql", 
 });
 const Providers = ({children}: {children: React.ReactNode}) => {
      const client = new ApolloClient({

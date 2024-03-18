@@ -8,8 +8,10 @@ import { useRouter } from "next/navigation";
 
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  // there's a default user created on startup for testing
+  const [email, setEmail] = useState("test@test.com");
+  const [password, setPassword] = useState("password");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [login] = useMutation(LOGIN_MUTATION);
@@ -85,6 +87,7 @@ const Login: React.FC = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
           margin="normal"
+          
         />
         <TextField
           label="Password"

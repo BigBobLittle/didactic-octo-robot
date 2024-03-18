@@ -22,23 +22,18 @@ import { GET_ALL_TASKS } from "../api/graphql/queries";
 import { useRouter } from "next/navigation";
 
 interface DashboardProps {
-  username: string;
   tasks: Task[];
-  onEditTask: ( task: Task) => void;
+  onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({
-  username,
-  tasks,
-
-}) => {
+const Dashboard: React.FC<DashboardProps> = ({ tasks }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [open, setOpen] = React.useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [deletePromptOpen, setDeletePromptOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
-  const router = useRouter()
+  const router = useRouter();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -47,14 +42,12 @@ const Dashboard: React.FC<DashboardProps> = ({
   const handleOpenTaskForm = (task: Task) => {
     setSelectedTask(task);
     setOpen(true);
-  };  
+  };
 
   const handleCloseTaskForm = () => {
     setSelectedTask(null);
     setOpen(false);
   };
-
-
 
   const handleCloseDeletePrompt = () => {
     setTaskToDelete(null);
@@ -70,20 +63,20 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   const [deleteTask] = useMutation(DELETE_TASK);
   const onDeleteTask = async (taskId: string) => {
-   await deleteTask({
+    await deleteTask({
       variables: {
-        input:{
-          id: taskId
-        }
+        input: {
+          id: taskId,
+        },
       },
       refetchQueries: [GET_ALL_TASKS],
     });
   };
 
- const logout = () => {
-  localStorage.removeItem("authToken");
-   router.push("/")
- }
+  const logout = () => {
+    localStorage.removeItem("authToken");
+    router.push("/");
+  };
 
   return (
     <div>
@@ -95,7 +88,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           <Button
             variant="contained"
             color="secondary"
-            onClick={handleOpenTaskForm}
+            onClick={() => handleOpenTaskForm}
           >
             Add Task
           </Button>
@@ -130,9 +123,6 @@ const Dashboard: React.FC<DashboardProps> = ({
         </Toolbar>
       </AppBar>
       <div>
-        <Typography variant="h5" gutterBottom>
-          Welcome, {username}!
-        </Typography>
         <TaskTable
           tasks={tasks}
           onEdit={handleOpenTaskForm}
