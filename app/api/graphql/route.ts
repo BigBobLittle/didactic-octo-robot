@@ -5,7 +5,7 @@ import { NextRequest } from 'next/server';
 import * as dotenv from "dotenv";
 
 
-import connectDB from '../../db/model/db';
+import {connectDB, createDummyUser, } from '../../db/model/db';
 import typeDefs from './schema';
 import resolvers from './resolvers';
 

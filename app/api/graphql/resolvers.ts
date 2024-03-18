@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import { Task } from '../../types/Tasks'; 
 import {UserModel} from '../../db/model/user.model';
 import {TaskModel} from '../../db/model/task.model';
+import { createDummyUser } from '@/app/db/model/db';
 
 
 
@@ -49,26 +50,40 @@ const resolvers = {
           throw new Error('Please provide a password');
         }
         // Find user by email
-        const user = await UserModel.findOne({ email })
+        let  user
+         user = await UserModel.findOne({ email })
 
         // If user doesn't exist, throw an error
         if (!user) {
-          throw new Error('User not found');
+          // throw new Error('User not found');
+          // create a dummy user account just for testing 
+         const newUser = await createDummyUser();
+         const task = await TaskModel.create({name: 'test name', description: 'test description'})
+        
+          if(newUser && newUser._id ){
+
+            user = newUser.toJSON();
+          }
         }
 
-        // Compare passwords
-        const isPasswordValid = await bcrypt.compare(password, user.password)
+       if(user){
+         // Compare passwords
+         const isPasswordValid = await bcrypt.compare(password, user.password)
 
-        // If passwords don't match, throw an error
-        if (!isPasswordValid) {
-          throw new Error('Invalid username or password');
-        }
-
-        // Generate JWT token
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-
-        // Return the token
-        return { message: 'Login successful',  data: { token } };
+         // If passwords don't match, throw an error
+         if (!isPasswordValid) {
+           throw new Error('Invalid username or password');
+         }
+ 
+         // Generate JWT token
+         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+ 
+         // Return the token
+         return { message: 'Login successful',  data: { token } };
+       }
+       else{
+        throw new Error('User not found');
+       }
       } catch (error: any) {
       
         throw new Error(`Login failed: ${error.message}`);

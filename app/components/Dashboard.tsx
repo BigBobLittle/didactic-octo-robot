@@ -39,10 +39,16 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleOpenTaskForm = (task: Task) => {
+  const handleOpenTaskForm = () => {
+    setSelectedTask(selectedTask);
+    setOpen(true);
+  };
+
+  const handleEditTask = (task: Task) => {
     setSelectedTask(task);
     setOpen(true);
   };
+  
 
   const handleCloseTaskForm = () => {
     setSelectedTask(null);
@@ -88,7 +94,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks }) => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => handleOpenTaskForm}
+            onClick={handleOpenTaskForm}
           >
             Add Task
           </Button>
@@ -125,7 +131,7 @@ const Dashboard: React.FC<DashboardProps> = ({ tasks }) => {
       <div>
         <TaskTable
           tasks={tasks}
-          onEdit={handleOpenTaskForm}
+          onEdit={handleEditTask}
           onDelete={onDeleteTask}
         />
       </div>
